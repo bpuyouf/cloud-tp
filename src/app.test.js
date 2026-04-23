@@ -1,28 +1,56 @@
-const express = require('express');
-const { Pool } = require('pg');
+const http = require('http');
+const { app, pool } = require('./app');
 
-// Simple test to verify the app can start without errors
-describe('API Basic Tests', () => {
-  test('should load environment variables', () => {
-    expect(process.env.DB_HOST).toBeDefined();
-    expect(process.env.DB_PORT).toBeDefined();
-    expect(process.env.DB_NAME).toBeDefined();
+let server;
+let baseUrl;
+
+beforeAll(done => {
+  server = app.listen(0, () => {
+    const { port } = server.address();
+    baseUrl = `http://127.0.0.1:${port}`;
+    done();
+  });
+});
+
+afterAll(done => {
+  server.close(done);
+});
+
+function request(path) {
+  return new Promise((resolve, reject) => {
+    http.get(`${baseUrl}${path}`, res => {
+      let body = '';
+      res.on('data', chunk => {
+        body += chunk;
+      });
+      res.on('end', () => {
+        resolve({ statusCode: res.statusCode, body: JSON.parse(body) });
+      });
+    }).on('error', reject);
+  });
+}
+
+describe('/health endpoint', () => {
+  test('returns 200 and connected when database query succeeds', async () => {
+    const querySpy = jest.spyOn(pool, 'query').mockResolvedValue({ rows: [{ '?column?': 1 }] });
+
+    const response = await request('/health');
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toEqual({ status: 'ok', database: 'connected' });
+
+    querySpy.mockRestore();
   });
 
-  test('should create express app', () => {
-    const app = express();
-    expect(app).toBeDefined();
-    expect(typeof app.listen).toBe('function');
-  });
+  test('returns 500 and disconnected when database query fails', async () => {
+    const querySpy = jest.spyOn(pool, 'query').mockRejectedValue(new Error('connection failed'));
 
-  test('should create database pool', () => {
-    const pool = new Pool({
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      database: process.env.DB_NAME,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASS,
-    });
-    expect(pool).toBeDefined();
+    const response = await request('/health');
+
+    expect(response.statusCode).toBe(500);
+    expect(response.body).toMatchObject({ status: 'error', database: 'disconnected' });
+    expect(response.body.error).toBe('connection failed');
+
+    querySpy.mockRestore();
   });
 });

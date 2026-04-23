@@ -30,7 +30,11 @@ app.get('/', (req, res) => {
   res.json({ message: 'API is running' });
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`API listening on port ${port}`);
-});
+module.exports = { app, pool };
+
+if (require.main === module) {
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`API listening on port ${port}`);
+  });
+}
