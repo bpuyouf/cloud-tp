@@ -114,7 +114,11 @@ k8s/
 - Stockage persistant pour la haute disponibilité
 - Service LoadBalancer pour l'accès externe
 
-### Résultats de la Préparation
-- Manifestes prêts pour déploiement sur cluster Kubernetes
-- Configuration adaptée pour environnements cloud (Azure)
-- Séparation claire entre configuration et code applicatif
+### Résultats
+> build docker 
+![alt text](image3-1.png)
+
+> deployment kubernetes
+![alt text](image3.21.png)
+
+> check deployment
