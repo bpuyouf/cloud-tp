@@ -80,3 +80,41 @@ Ce rapport documente la résolution des différentes étapes de l'exercice
 
 > installation de Minikube
 ![alt text](image2-33.png)
+
+## 3 - Préparation du Déploiement Kubernetes
+
+### 1. Création des Manifestes Kubernetes
+- **ConfigMap et Secret** : Configuration des variables d'environnement et secrets pour la base de données
+- **PersistentVolumeClaim** : Stockage persistant pour les données PostgreSQL
+- **ConfigMap pour l'initialisation DB** : Script SQL d'initialisation intégré dans un ConfigMap
+- **Deployment PostgreSQL** : Déploiement du service de base de données avec volumes montés
+- **Service PostgreSQL** : Exposition interne du service de base de données
+- **Deployment API** : Déploiement de l'application Node.js
+- **Service API** : Exposition du service API avec LoadBalancer
+
+### 2. Structure des Manifestes
+```
+k8s/
+├── config.yaml              # ConfigMap et Secret
+├── pvc.yaml                 # PersistentVolumeClaim
+├── init-db-configmap.yaml   # Script d'initialisation DB
+├── postgres-deployment.yaml # Déploiement PostgreSQL
+├── postgres-service.yaml    # Service PostgreSQL
+├── api-deployment.yaml      # Déploiement API
+└── api-service.yaml         # Service API
+```
+
+### 3. Script de Déploiement
+- Création du script `deploy-k8s.sh` pour automatiser l'application des manifestes
+- Ordre d'application respectant les dépendances (config avant déploiements)
+
+### 4. Configuration pour Production
+- Utilisation de Secrets pour les mots de passe sensibles
+- Variables d'environnement externalisées
+- Stockage persistant pour la haute disponibilité
+- Service LoadBalancer pour l'accès externe
+
+### Résultats de la Préparation
+- Manifestes prêts pour déploiement sur cluster Kubernetes
+- Configuration adaptée pour environnements cloud (Azure)
+- Séparation claire entre configuration et code applicatif

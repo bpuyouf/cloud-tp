@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: init-db-configmap
+data:
+  init.sql: |
+    -- Create user table
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Create product table
+    CREATE TABLE IF NOT EXISTS products (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      description TEXT,
+      price DECIMAL(10, 2) NOT NULL,
+      user_id INTEGER REFERENCES users(id),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Insert some sample data
+    INSERT INTO users (name, email) VALUES ('John Doe', 'john@example.com') ON CONFLICT (email) DO NOTHING;
+    INSERT INTO products (name, description, price, user_id) VALUES ('Sample Product', 'A sample product', 19.99, 1) ON CONFLICT DO NOTHING;

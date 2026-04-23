@@ -163,6 +163,77 @@ docker-compose exec db psql -U user -d mydb
 3. Make changes and test locally
 4. Submit a pull request
 
+## Kubernetes Deployment
+
+### Prerequisites
+- Kubernetes cluster (minikube, AKS, EKS, GKE, etc.)
+- `kubectl` configured to access your cluster
+- Docker registry access (if using private registry)
+
+### Prepare Docker Images
+Before deploying to Kubernetes, push your API image to a registry:
+```bash
+# Build and tag the image
+docker build -t your-registry/cloud-tp-api:latest .
+
+# Push to registry
+docker push your-registry/cloud-tp-api:latest
+
+# Update k8s/api-deployment.yaml with your image URL
+```
+
+### Deploy to Kubernetes
+```bash
+# Run the deployment script
+./deploy-k8s.sh
+
+# Or apply manifests manually
+kubectl apply -f k8s/
+```
+
+### Check Deployment Status
+```bash
+# Check pods
+kubectl get pods
+
+# Check services
+kubectl get svc
+
+# View logs
+kubectl logs -l app=api
+kubectl logs -l app=postgres
+```
+
+### Access the Application
+```bash
+# Get the external IP (for LoadBalancer service)
+kubectl get svc api-service
+
+# Test health endpoint
+curl http://<EXTERNAL-IP>:3000/health
+```
+
+### Kubernetes Manifests
+- `k8s/config.yaml` - ConfigMap and Secret for configuration
+- `k8s/pvc.yaml` - Persistent volume claim for database storage
+- `k8s/init-db-configmap.yaml` - Database initialization script
+- `k8s/postgres-deployment.yaml` - PostgreSQL deployment
+- `k8s/postgres-service.yaml` - PostgreSQL service
+- `k8s/api-deployment.yaml` - API deployment
+- `k8s/api-service.yaml` - API service
+
+### Scaling and Management
+```bash
+# Scale API replicas
+kubectl scale deployment api-deployment --replicas=3
+
+# Update deployment
+kubectl set image deployment/api-deployment api=your-registry/cloud-tp-api:v2
+
+# Clean up
+kubectl delete -f k8s/
+```
+
 ## License
 
 This project is for educational purposes.
