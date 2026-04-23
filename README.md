@@ -4,6 +4,57 @@ This project demonstrates the containerization and automated deployment of a web
 
 To get to the assignement report, check [this file](./rapport/rapport.md)
 
+## CI/CD Pipeline
+
+This project includes an automated CI/CD pipeline using GitHub Actions that handles the complete deployment workflow.
+
+### Pipeline Flow
+```
+git push → CI/CD → Install Dependencies → Run Tests → Build Docker → Push Image → Deploy to VM → Update Kubernetes
+```
+
+### Automatic Triggers
+- **Push to main/master branch**: Full CI/CD pipeline execution
+- **Pull Request**: CI checks (dependencies, tests, build) without deployment
+
+### Pipeline Steps
+1. **Install Dependencies**: `npm ci` for clean dependency installation
+2. **Run Tests**: `npm test` (placeholder for now)
+3. **Build Docker**: Creates Docker image for the API
+4. **Push Image**: Pushes to GitHub Container Registry (ghcr.io)
+5. **Deploy to VM**: SSH connection to Azure VM
+6. **Update Kubernetes**: Applies new image to Kubernetes deployment
+
+### Required GitHub Secrets
+Set these in your repository settings under "Secrets and variables" → "Actions":
+
+| Secret Name | Description | Example |
+|-------------|-------------|---------|
+| `AZURE_VM_HOST` | Azure VM public IP | `108.143.184.247` |
+| `AZURE_VM_USER` | SSH username | `bastienpf` |
+| `AZURE_VM_SSH_KEY` | Private SSH key | `-----BEGIN OPENSSH PRIVATE KEY-----...` |
+
+### Setting up SSH Access
+1. **Generate SSH key pair** (on your local machine):
+   ```bash
+   ssh-keygen -t rsa -b 4096 -C "github-actions@your-repo"
+   ```
+
+2. **Add public key to Azure VM**:
+   ```bash
+   ssh-copy-id bastienpf@108.143.184.247
+   ```
+
+3. **Add private key to GitHub Secrets**:
+   - Copy the entire private key (including `-----BEGIN OPENSSH PRIVATE KEY-----`)
+   - Paste into GitHub repository secrets as `AZURE_VM_SSH_KEY`
+
+### Pipeline Status
+Check the "Actions" tab in your GitHub repository to monitor pipeline execution.
+
+### Manual Pipeline Triggers
+You can also trigger the pipeline manually from the Actions tab.
+
 ## Architecture
 
 The application consists of two services:

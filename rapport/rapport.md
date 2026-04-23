@@ -118,7 +118,72 @@ k8s/
 > build docker 
 ![alt text](image3-1.png)
 
-> deployment kubernetes
-![alt text](image3.21.png)
+> deploiment kubernetes
+![alt text](image3-21.png)
 
-> check deployment
+> verification du déploiment (localement)
+![alt text](image3-22.png)
+
+> ajout d'une règle inbound sur le port 3000 pour ma VM Azure
+![alt text](image3-31.png)
+
+> utilisation de kubectl port forwarding pour acceder à l'API avec l'IP de la VM comme url :
+![alt text](image3-32.png)
+accès depuis ma machine locale
+![alt text](image3-33.png)
+
+## 5 - Mise en place du Pipeline CI/CD
+
+### 1. Configuration GitHub Actions
+- Création du workflow `.github/workflows/deploy.yml`
+- Configuration des déclencheurs automatiques (push sur main/master)
+- Séparation en jobs : test-and-build et deploy
+
+### 2. Pipeline Automatique
+Le pipeline suit le flux suivant :
+```
+git push → CI/CD → Installation dépendances → Tests → Build Docker → Push image → Déploiement VM → Mise à jour Kubernetes
+```
+
+### 3. Étapes du Pipeline
+
+#### Job 1: test-and-build
+- **Installation des dépendances** : `npm ci` pour installation propre
+- **Exécution des tests** : `npm test` (placeholder pour l'instant)
+- **Build Docker** : Construction de l'image API
+- **Push vers Registry** : Envoi vers GitHub Container Registry
+
+#### Job 2: deploy (uniquement sur main/master)
+- **Connexion SSH à la VM** : Utilisation des secrets GitHub
+- **Mise à jour de l'image** : Modification du manifest Kubernetes
+- **Application des changements** : `kubectl apply -f k8s/`
+- **Vérification du déploiement** : Rollout status et vérification des pods
+
+### 4. Secrets et Variables d'Environnement
+Configuration des secrets dans GitHub :
+- `AZURE_VM_HOST` : IP publique de la VM Azure
+- `AZURE_VM_USER` : Nom d'utilisateur SSH
+- `AZURE_VM_SSH_KEY` : Clé privée SSH pour l'accès
+
+### 5. Configuration SSH
+- Génération d'une paire de clés SSH dédiée pour GitHub Actions
+- Ajout de la clé publique sur la VM Azure
+- Stockage de la clé privée dans les secrets GitHub
+
+### 6. Gestion des Échecs
+- **Arrêt automatique** : Pipeline échoue si les tests échouent
+- **Pas de déploiement manuel** : Tout est automatisé
+- **Logs détaillés** : Disponibles dans l'onglet Actions de GitHub
+
+### Résultats
+
+> Configuration du workflow GitHub Actions
+creation d'un clée ssh pour github action et copie sur la VM
+![alt text](image4-11.png)
+![alt text](image4-12.png)
+
+> Exécution automatique du pipeline
+![alt text](image4-2.png)
+
+> Déploiement réussi sur la VM
+![alt text](image4-3.png)
