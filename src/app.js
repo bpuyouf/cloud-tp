@@ -34,7 +34,6 @@ module.exports = { app, pool };
 
 if (require.main === module) {
   const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    console.log(`API listening on port ${port}`);
-  });
-}
+  app.listen(port, "0.0.0.0", () => {
+  console.log(`API listening on port ${port}`);
+});}

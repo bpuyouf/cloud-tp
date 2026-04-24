@@ -201,5 +201,5 @@ En effet, mes secrets ne marchent pas. J'arrive a me connecter en local en utili
 > CA MARCHE MAINTENANT :)))))))))))))))))
 ![alt text](image4-23.png)
 
-> Pour finir, création d'une regle outbound sur le port 30007 après une modification des règles de déployement pour l'automatisation (fichier k8s/api-service)
+> Pour finir, création d'une regle inbound sur le port 30007 après une modification des règles de déployement pour l'automatisation (fichier k8s/api-service)
 ![alt text](image4-31.png)
