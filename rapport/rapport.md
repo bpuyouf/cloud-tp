@@ -195,3 +195,4 @@ En effet, mes secrets ne marchent pas. J'arrive a me connecter en local en utili
 
 > je me suis apperçu que j'avais une passphrase définie sur la clée, ce qui empechait le script de fonctionner. J'ai refait une clée sans passphrase et j'ai ajouté cette dernière à tout le workflow
 > malgrès cette modification, le workflow ne marche toujours pas lorsqu'il faut se connected à la VM
+> j'ai donc essayé de supprimer mes secrets et leur environnement, et de les re-créer au niveau du repository.
