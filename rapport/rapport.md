@@ -154,7 +154,7 @@ git push → CI/CD → Installation dépendances → Tests → Build Docker → 
 
 #### Job 1: test-and-build
 - **Installation des dépendances** : `npm ci` pour installation propre
-- **Exécution des tests** : `npm test` (placeholder pour l'instant)
+- **Exécution des tests** : `npm test`
 - **Build Docker** : Construction de l'image API
 - **Push vers Registry** : Envoi vers GitHub Container Registry
 
@@ -177,29 +177,52 @@ Configuration des secrets dans GitHub :
 
 ### Résultats
 
-> Configuration du workflow GitHub Actions
-> le déploiement sur la VM dans la pipeline avait des difficultées.
+> Configuration du workflow GitHub Actions.
+> Le déploiement sur la VM dans la pipeline avait des difficultées.
 Pour palier à celles ci, j'ai créé une nouvelle pair de clées publiques / privées, nommées 'github_action'.
 J'ai autorisé la clée publique dans la VM (~/.ssh/authorised_keys) et j'ai copié la clé privée dans mes secrets github
-J'ai aussi copié le nom de mon user azure, et l'IP publique de la VM dans les secrets githubs
-creation d'un clée ssh pour github action et copie sur la VM
+J'ai aussi copié le nom de mon user azure, et l'IP publique de la VM dans les secrets githubs.
+> Creation d'un clée ssh pour github action (copie du contenue de la clée privé dans les secret : voir plus loin) :
 ![alt text](image4-11.png)
+Du coté de la VM, il faut modifier ~/.ssh/authorized_keys avec la clée publique (en utilisant vim par exemple)
 ![alt text](image4-12.png)
 
 > Exécution automatique du pipeline :
 "test and build" s'execute sans erreurs
 ![alt text](image4-21.png)
 
-> le déploiement sur la VM a toujours des difficultées
-En effet, mes secrets ne marchent pas. J'arrive a me connecter en local en utilisant la clée privé 'github_action', mais quand je copie son contenu dans un secret github, elle n'est pas récupéré par lors du CI-CD
+Lors du déploiement sur la VM, j'ai rencontré des difficultés.
+Voici les problèmes que j'ai rencontré :
+- mes secrets ne marchent pas. J'arrive a me connecter en local en utilisant la clée privé 'github_action', mais quand je copie son contenu dans un secret github, elle n'est pas récupéré par lors du CI-CD
 ![alt text](image4-22.png)
 
-> je me suis apperçu que j'avais une passphrase définie sur la clée, ce qui empechait le script de fonctionner. J'ai refait une clée sans passphrase et j'ai ajouté cette dernière à tout le workflow
-> malgrès cette modification, le workflow ne marche toujours pas lorsqu'il faut se connected à la VM
-> j'ai donc essayé de supprimer mes secrets et leur environnement, et de les re-créer au niveau du repository.
+Je me suis apperçu que j'avais une passphrase définie sur la clée, ce qui empechait le script de fonctionner. J'ai refait une clée sans passphrase et j'ai ajouté cette dernière à tout le workflow.
+- Malgrès cette modification, le workflow ne marche toujours pas lorsqu'il faut se connected à la VM
+
+J'ai donc essayé de supprimer mes secrets et leur environnement, et de les re-créer au niveau du repository.
+![alt text](image4-24.png)
 
 > CA MARCHE MAINTENANT :)))))))))))))))))
 ![alt text](image4-23.png)
 
-> Pour finir, création d'une regle inbound sur le port 30007 après une modification des règles de déployement pour l'automatisation (fichier k8s/api-service)
+> Pour finir, j'ai essayé de résoudre un problème lors du déploiement. 
+En effet, j'ai du ouvrir un port-forward pour exposer mon application depuis minikube sur ma VM. Mais ce n'est pas automatisable dans la pipeline Ci-CD (du moins je n'ai pas trouvé comment le faire)
+
+> Donc, j'ai créé une regle inbound sur le port 30007 après une modification des règles de déployement (passage en type=nodePort) pour l'automatisation (fichier k8s/api-service)
 ![alt text](image4-31.png)
+
+> Finalement, j'ai abandonné cet idée après beaucoup d'experimentations. Minikube n'a pas de manière "clean" pour d'automatiser l'ouverture d'un tunnel ou pour faire du port forwarding dans le script de déploiement kubernetes. (deploy.yml)
+
+> Je suis donc revenu à une version fonctionnelle du site, même si imparfaite.
+La mise à jour du site sur le server s'effectue bien, mais le serveur n'est pas accessible.
+
+> Il faut toujours utiliser la commande 
+>> kubectl port-forward svc/api-service 3000:3000 --address 0.0.0.0
+Forwarding from 0.0.0.0:3000 -> 3000
+
+> Elle permet de faire un port forwarding, mais cette commande doit etre executé à la main après chaque execution du ci-cd. Pire, l'execution du CI-CD peut faire planter cette commande et empecher un redémarage 'clean' de l'application, dans sa dernière version.
+
+## Conclusion
+
+J'ai effectué toutes les consignes, à l'exeption du déploiement complet automatisé. L'application se met bien à jour, mais la mise en ligne de cette dernière, avec un port-forwarding, n'est possible que manuellement. 
+De plus, la méthode que j'ai utilisé pour le port-forwarding n'est pas idéale. Si un ctrl+c n'est pas effectué pour quitter ce port forwarding, la mise à jour automatique avec le CI-CD peut provoquer un crash de ce dernier et forcer une fermeture du terminal et un reset pas vraiment 'clean'
