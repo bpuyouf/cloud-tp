@@ -87,3 +87,8 @@ jobs:
           kubectl get svc
 
           echo "Deployment completed successfully!"
+    - name: Debug secrets
+      run: |
+        echo "Host secret present: ${{ secrets.AZURE_VM_HOST != '' }}"
+        echo "Username secret present: ${{ secrets.AZURE_VM_USER != '' }}"
+        echo "SSH_key secret present: ${{ secrets.AZURE_VM_SSH_KEY != '' }}"

@@ -74,6 +74,9 @@ Ce rapport documente la résolution des différentes étapes de l'exercice
 > ajout de l'user au groupe docker pour permettre l'execution de commandes docker sans utiliser sudo (c'est necessaire pour kubernetes, pour pouvoir utiliser minikube avec vm-driver=docker)
 > sudo usermod -aG docker $USER
 
+> build docker 
+![alt text](image3-1.png)
+
 > installation de kubectl (doc officielle : https://kubernetes.io/fr/docs/tasks/tools/install-kubectl/#install-kubectl-on-linux)
 ![alt text](image2-31.png)
 ![alt text](image2-32.png)
@@ -115,8 +118,6 @@ k8s/
 - Service LoadBalancer pour l'accès externe
 
 ### Résultats
-> build docker 
-![alt text](image3-1.png)
 
 > deploiment kubernetes
 ![alt text](image3-21.png)
@@ -131,6 +132,9 @@ k8s/
 ![alt text](image3-32.png)
 accès depuis ma machine locale
 ![alt text](image3-33.png)
+
+-> pourquoi faire ce port forwarding ? 
+- plus simple que la mise en place d'un serveur apache et de la modification des fichiers de configuration
 
 ## 5 - Mise en place du Pipeline CI/CD
 
@@ -182,8 +186,10 @@ creation d'un clée ssh pour github action et copie sur la VM
 ![alt text](image4-11.png)
 ![alt text](image4-12.png)
 
-> Exécution automatique du pipeline
-![alt text](image4-2.png)
+> Exécution automatique du pipeline :
+"test and build" s'execute sans erreurs
+![alt text](image4-21.png)
 
 > Déploiement réussi sur la VM
-![alt text](image4-3.png)
+![alt text](image4-22.png)
+----> erreur avec deloy pour le moment
