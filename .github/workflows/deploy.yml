@@ -76,7 +76,6 @@ jobs:
           kubectl rollout status deployment/api-deployment
           kubectl get pods
           kubectl get svc
-          minikube tunnel
           echo "Deployment completed successfully!"
         EOF
         rm -f key.pem
