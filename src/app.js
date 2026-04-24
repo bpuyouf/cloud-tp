@@ -19,7 +19,7 @@ app.get('/health', async (req, res) => {
   try {
     // Check database connection
     await pool.query('SELECT 1');
-    res.json({ status: 'ok', database: 'connected' });
+    res.json({ status: 'ok', database: 'connecte' });
   } catch (error) {
     res.status(500).json({ status: 'error', database: 'disconnected', error: error.message });
   }

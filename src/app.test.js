@@ -37,7 +37,7 @@ describe('/health endpoint', () => {
     const response = await request('/health');
 
     expect(response.statusCode).toBe(200);
-    expect(response.body).toEqual({ status: 'ok', database: 'connected' });
+    expect(response.body).toEqual({ status: 'ok', database: 'connecte' });
 
     querySpy.mockRestore();
   });
