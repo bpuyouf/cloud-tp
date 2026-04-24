@@ -178,7 +178,7 @@ Configuration des secrets dans GitHub :
 
 > Configuration du workflow GitHub Actions
 > le déploiement sur la VM dans la pipeline avait des difficultées.
-Pour palier à celles ci, j'ai créé une nouvelle pair de clées publiques / privées, nommées 'githu_action'.
+Pour palier à celles ci, j'ai créé une nouvelle pair de clées publiques / privées, nommées 'github_action'.
 J'ai autorisé la clée publique dans la VM (~/.ssh/authorised_keys) et j'ai copié la clé privée dans mes secrets github
 J'ai aussi copié le nom de mon user azure, et l'IP publique de la VM dans les secrets githubs
 creation d'un clée ssh pour github action et copie sur la VM
@@ -189,8 +189,6 @@ creation d'un clée ssh pour github action et copie sur la VM
 "test and build" s'execute sans erreurs
 ![alt text](image4-21.png)
 
-> le déploiement sur la VM dans la pipeline avait des difficultées.
-Pour palier à celles ci, j'ai créé une nouvelle pair de clées publiques / privées, nommées 'githu_action'.
-J'ai autorisé la clée publique dans la VM (~/.ssh/authorised_keys) et j'ai copié la clé privée dans mes secrets github
-> Déploiement réussi sur la VM
+> le déploiement sur la VM a toujours des difficultées
+En effet, mes secrets ne marchent pas. J'arrive a me connecter en local en utilisant la clée privé 'github_action', mais quand je copie son contenu dans un secret github, elle n'est pas récupéré par lors du CI-CD
 ![alt text](image4-22.png)
