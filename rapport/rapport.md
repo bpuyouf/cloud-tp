@@ -135,6 +135,7 @@ accès depuis ma machine locale
 
 -> pourquoi faire ce port forwarding ? 
 - plus simple que la mise en place d'un serveur apache et de la modification des fichiers de configuration
+- appelé à disparaitre, solution temporaire pour le test (car pas une solution automatisable). Voir la fin de la mise en place du CI/CD.
 
 ## 5 - Mise en place du Pipeline CI/CD
 
@@ -200,3 +201,5 @@ En effet, mes secrets ne marchent pas. J'arrive a me connecter en local en utili
 > CA MARCHE MAINTENANT :)))))))))))))))))
 ![alt text](image4-23.png)
 
+> Pour finir, création d'une regle outbound sur le port 30007 après une modification des règles de déployement pour l'automatisation (fichier k8s/api-service)
+![alt text](image4-31.png)
