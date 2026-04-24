@@ -70,7 +70,8 @@ jobs:
         ssh -i key.pem -o StrictHostKeyChecking=no $AZURE_VM_USER@$AZURE_VM_HOST << 'EOF'
           cd /home/$AZURE_VM_USER/cloud-tp
           git pull origin main
-          sed -i "s|image:.*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|" k8s/api-deployment.yaml
+          sed -i "s|image: .*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|" k8s/api-deployment.yaml
+          sed -i "s|imagePullPolicy: Never|imagePullPolicy: Always|" k8s/api-deployment.yaml
           kubectl apply -f k8s/
           kubectl rollout status deployment/api-deployment
           kubectl get pods
