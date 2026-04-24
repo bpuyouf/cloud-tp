@@ -15,7 +15,7 @@ spec:
       containers:
       - name: api
         image: cloud-tp-api:latest
-        imagePullPolicy: Never  # Use local image for Minikube
+        imagePullPolicy: Always  #Never Uses local image for Minikube
         ports:
         - containerPort: 3000
         env:
