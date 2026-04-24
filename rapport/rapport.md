@@ -177,6 +177,10 @@ Configuration des secrets dans GitHub :
 ### Résultats
 
 > Configuration du workflow GitHub Actions
+> le déploiement sur la VM dans la pipeline avait des difficultées.
+Pour palier à celles ci, j'ai créé une nouvelle pair de clées publiques / privées, nommées 'githu_action'.
+J'ai autorisé la clée publique dans la VM (~/.ssh/authorised_keys) et j'ai copié la clé privée dans mes secrets github
+J'ai aussi copié le nom de mon user azure, et l'IP publique de la VM dans les secrets githubs
 creation d'un clée ssh pour github action et copie sur la VM
 ![alt text](image4-11.png)
 ![alt text](image4-12.png)
@@ -185,5 +189,8 @@ creation d'un clée ssh pour github action et copie sur la VM
 "test and build" s'execute sans erreurs
 ![alt text](image4-21.png)
 
+> le déploiement sur la VM dans la pipeline avait des difficultées.
+Pour palier à celles ci, j'ai créé une nouvelle pair de clées publiques / privées, nommées 'githu_action'.
+J'ai autorisé la clée publique dans la VM (~/.ssh/authorised_keys) et j'ai copié la clé privée dans mes secrets github
 > Déploiement réussi sur la VM
 ![alt text](image4-22.png)
