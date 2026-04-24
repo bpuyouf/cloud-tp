@@ -192,3 +192,6 @@ creation d'un clée ssh pour github action et copie sur la VM
 > le déploiement sur la VM a toujours des difficultées
 En effet, mes secrets ne marchent pas. J'arrive a me connecter en local en utilisant la clée privé 'github_action', mais quand je copie son contenu dans un secret github, elle n'est pas récupéré par lors du CI-CD
 ![alt text](image4-22.png)
+
+> je me suis apperçu que j'avais une passphrase définie sur la clée, ce qui empechait le script de fonctionner. J'ai refait une clée sans passphrase et j'ai ajouté cette dernière à tout le workflow
+> malgrès cette modification, le workflow ne marche toujours pas lorsqu'il faut se connected à la VM

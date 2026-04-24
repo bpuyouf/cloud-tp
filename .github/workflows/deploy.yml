@@ -67,7 +67,7 @@ jobs:
       run: |
         echo "$AZURE_VM_SSH_KEY" > key.pem
         chmod 600 key.pem
-        ssh -i key.pem -o StrictHostKeyChecking=no $AZURE_VM_USER@$AZURE_VM_HOST << 'EOF'
+        ssh -i key.pem $AZURE_VM_USER@$AZURE_VM_HOST << 'EOF'
           cd /home/$AZURE_VM_USER/cloud-tp
           git pull origin main
           sed -i "s|image:.*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|" k8s/api-deployment.yaml
@@ -78,3 +78,8 @@ jobs:
           echo "Deployment completed successfully!"
         EOF
         rm -f key.pem
+    - name: Debug secrets
+      run: |
+        echo "AZURE_VM_HOST set: ${{ secrets.AZURE_VM_HOST != '' }}"
+        echo "AZURE_VM_USER set: ${{ secrets.AZURE_VM_USER != '' }}"
+        echo "AZURE_VM_SSH_KEY set: ${{ secrets.AZURE_VM_SSH_KEY != '' }}"
