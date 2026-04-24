@@ -167,14 +167,9 @@ git push → CI/CD → Installation dépendances → Tests → Build Docker → 
 Configuration des secrets dans GitHub :
 - `AZURE_VM_HOST` : IP publique de la VM Azure
 - `AZURE_VM_USER` : Nom d'utilisateur SSH
-- `AZURE_VM_SSH_KEY` : Clé privée SSH pour l'accès
+- `AZURE_VM_SSH_KEY` : Clé privée SSH pour l'accès au server azure
 
-### 5. Configuration SSH
-- Génération d'une paire de clés SSH dédiée pour GitHub Actions
-- Ajout de la clé publique sur la VM Azure
-- Stockage de la clé privée dans les secrets GitHub
-
-### 6. Gestion des Échecs
+### 5. Gestion des Échecs
 - **Arrêt automatique** : Pipeline échoue si les tests échouent
 - **Pas de déploiement manuel** : Tout est automatisé
 - **Logs détaillés** : Disponibles dans l'onglet Actions de GitHub
@@ -192,4 +187,3 @@ creation d'un clée ssh pour github action et copie sur la VM
 
 > Déploiement réussi sur la VM
 ![alt text](image4-22.png)
-----> erreur avec deloy pour le moment

@@ -59,36 +59,22 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Deploy to Azure VM via SSH
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.AZURE_VM_HOST }}
-        username: ${{ secrets.AZURE_VM_USER }}
-        key: ${{ secrets.AZURE_VM_SSH_KEY }}
-        port: 22
-        script: |
-          # Navigate to project directory
-          cd /home/${{ secrets.AZURE_VM_USER }}/cloud-tp
-
-          # Pull latest changes
+    - name: Deploy using SSH command
+      env:
+        AZURE_VM_SSH_KEY: ${{ secrets.AZURE_VM_SSH_KEY }}
+        AZURE_VM_USER: ${{ secrets.AZURE_VM_USER }}
+        AZURE_VM_HOST: ${{ secrets.AZURE_VM_HOST }}
+      run: |
+        echo "$AZURE_VM_SSH_KEY" > key.pem
+        chmod 600 key.pem
+        ssh -i key.pem -o StrictHostKeyChecking=no $AZURE_VM_USER@$AZURE_VM_HOST << 'EOF'
+          cd /home/$AZURE_VM_USER/cloud-tp
           git pull origin main
-
-          # Update Kubernetes deployment with new image
-          sed -i "s|image:.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}|" k8s/api-deployment.yaml
-
-          # Apply Kubernetes manifests
+          sed -i "s|image:.*|image: ghcr.io/${{ github.repository }}:${{ github.sha }}|" k8s/api-deployment.yaml
           kubectl apply -f k8s/
-
-          # Wait for rollout to complete
           kubectl rollout status deployment/api-deployment
-
-          # Verify deployment
           kubectl get pods
           kubectl get svc
-
           echo "Deployment completed successfully!"
-    - name: Debug secrets
-      run: |
-        echo "Host secret present: ${{ secrets.AZURE_VM_HOST != '' }}"
-        echo "Username secret present: ${{ secrets.AZURE_VM_USER != '' }}"
-        echo "SSH_key secret present: ${{ secrets.AZURE_VM_SSH_KEY != '' }}"
+        EOF
+        rm -f key.pem
